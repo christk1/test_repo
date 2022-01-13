@@ -6,9 +6,9 @@ COPY . /usr/src/myapp
 WORKDIR /usr/src/myapp
 
 # This command compiles your app using GCC, adjust for your source code
-RUN g++ -o myapp main.cpp
+RUN g++ -o cpp-example main.cpp
 
 # This command runs your application, comment out this line to compile only
-CMD ["./myapp"]
+CMD ["./cpp-example"]
 
 LABEL Name=testrepo Version=0.0.1
