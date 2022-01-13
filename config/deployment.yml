@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cpp-example-deployment
+  labels:
+    app: cpp-example
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cpp-example
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: cpp-example
+    spec:
+      containers:
+      - name: cpp-example
+        image: <IMAGE>

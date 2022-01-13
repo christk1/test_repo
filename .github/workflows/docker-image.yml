@@ -12,5 +12,31 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
+    # Install doctl.
+    - name: Install doctl
+      uses: digitalocean/action-doctl@v2
+      with:
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: docker build . --tag ${{ secrets.REGISTRY_NAME }}/cpp-example:$(echo $GITHUB_SHA | head -c7)
+
+    - name: Log in to DigitalOcean Container Registry with short-lived credentials
+      run: doctl registry login --expiry-seconds 600
+
+    - name: Push image to DigitalOcean Container Registry
+      run: docker push ${{ secrets.REGISTRY_NAME }}/cpp-example:$(echo $GITHUB_SHA | head -c7)
+
+    # Deploy to DigitalOCcean Kubernetes.
+    - name: Update deployment file
+      run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/cpp-example:'${TAG}'|' $GITHUB_WORKSPACE/config/deployment.yml
+
+    - name: Save DigitalOcean kubeconfig with short-lived credentials
+      run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
+
+    - name: Deploy to DigitalOcean Kubernetes
+      run: kubectl apply -f $GITHUB_WORKSPACE/config/deployment.yml
+
+    - name: Verify deployment
+      run: kubectl rollout status deployment/cpp-example
