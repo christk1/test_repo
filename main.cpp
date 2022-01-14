@@ -5,7 +5,7 @@
 int main(int argc, char const *argv[])
 {
   using namespace std::chrono_literals;
-  std::cout << "Hello waiter!\n" << std::flush;
+  std::cout << "Hello waiter!!\n" << std::flush;
   while (true)
   {
     auto start = std::chrono::high_resolution_clock::now();
