@@ -39,4 +39,4 @@ jobs:
       run: kubectl apply -n sqlite -f $GITHUB_WORKSPACE/config/deployment.yml
 
     - name: Verify deployment
-      run: kubectl rollout status deployment/cpp-example-deployment
+      run: kubectl rollout status -n sqlite deployment/cpp-example-deployment
